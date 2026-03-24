@@ -6,24 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('habits', function (Blueprint $table) {
+        Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
+
+            $table->decimal('original_value', 10, 2);
+            $table->string('currency', 3);
+            $table->decimal('exchange_rate', 10, 4);
+            $table->decimal('brl_value', 10, 2);
+
+            $table->string('status')->default('completed');
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('habits');
+        Schema::dropIfExists('expenses');
     }
 };

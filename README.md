@@ -1,58 +1,178 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Expense Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Um sistema de controle de despesas pessoais desenvolvido em Laravel, permitindo aos usuários registrar despesas em diferentes moedas e visualizar conversões automáticas para Real Brasileiro (BRL).
 
-## About Laravel
+## Funcionalidades
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Autenticação de Usuários**: Registro e login com validação de CPF brasileiro
+- **Registro de Despesas**: Adicione despesas em USD, EUR ou GBP com conversão automática para BRL
+- **Dashboard**: Visualize totais, estatísticas e últimas despesas
+- **Gerenciamento de Despesas**: Liste, visualize e exclua despesas
+- **Interface Responsiva**: Design moderno com Tailwind CSS e Alpine.js
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Banco de Dados**: PostgreSQL
+- **Frontend**: Tailwind CSS, Alpine.js, Vite
+- **Testes**: Pest
+- **Containerização**: Docker & Docker Compose
+- **API de Câmbio**: ExchangeRate.host
 
-## Learning Laravel
+## Pré-requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP 8.2 ou superior
+- Composer
+- Node.js e npm
+- Docker e Docker Compose
+- Chave da API ExchangeRate.host (gratuita)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalação
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+1. **Clone o repositório**:
+   ```bash
+   git clone <url-do-repositorio>
+   cd teste-dirmod-helder-saraive-de-oliveira
+   ```
 
-## Agentic Development
+2. **Instale as dependências PHP**:
+   ```bash
+   composer install
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+3. **Instale as dependências JavaScript**:
+   ```bash
+   npm install
+   ```
+
+4. **Configure o ambiente**:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. **Configure as variáveis de ambiente**:
+   Edite o arquivo `.env` e configure:
+   ```env
+   DB_CONNECTION=pgsql
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_DATABASE=dirmod
+   DB_USERNAME=admin
+   DB_PASSWORD=12345678
+
+   EXCHANGE_API_KEY=sua-chave-api-aqui
+   ```
+
+6. **Inicie o banco de dados**:
+   ```bash
+   docker-compose up -d
+   ```
+
+7. **Execute as migrações**:
+   ```bash
+   php artisan migrate
+   ```
+
+8. **Construa os assets**:
+   ```bash
+   npm run build
+   ```
+
+9. **Inicie o servidor de desenvolvimento**:
+   ```bash
+   php artisan serve
+   ```
+
+   Ou use o comando de desenvolvimento completo:
+   ```bash
+   composer run dev
+   ```
+
+## Uso
+
+1. Acesse `http://localhost:8000` no navegador
+2. Registre uma nova conta com CPF válido e dados de endereço
+3. Faça login no sistema
+4. No dashboard, visualize estatísticas das despesas
+5. Acesse "Expenses" para adicionar novas despesas
+6. Preencha nome, valor e moeda da despesa
+7. O sistema converterá automaticamente para BRL usando a API de câmbio
+
+## Estrutura do Banco de Dados
+
+### Usuários (`users`)
+- `name`: Nome do usuário
+- `email`: Email (único)
+- `password`: Senha (hash)
+- `cpf`: CPF brasileiro (validado)
+- `cep`: CEP
+- `street`: Rua
+- `district`: Bairro
+- `city`: Cidade
+- `state`: Estado
+
+### Despesas (`expenses`)
+- `user_id`: ID do usuário (chave estrangeira)
+- `name`: Nome da despesa
+- `original_value`: Valor original
+- `currency`: Moeda (USD/EUR/GBP)
+- `exchange_rate`: Taxa de câmbio
+- `brl_value`: Valor convertido em BRL
+- `status`: Status da despesa (padrão: 'completed')
+
+## API de Câmbio
+
+O sistema utiliza a API gratuita do ExchangeRate.host para obter taxas de câmbio em tempo real. Certifique-se de configurar a chave da API no arquivo `.env`.
+
+## Testes
+
+Execute os testes com Pest:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+php artisan test
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Desenvolvimento
 
-## Contributing
+Para desenvolvimento com hot reload:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+npm run dev
+```
 
-## Code of Conduct
+Para executar o servidor Laravel com queue worker e logs:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer run dev
+```
 
-## Security Vulnerabilities
+## Docker
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+O projeto inclui configuração Docker para PostgreSQL. Para iniciar:
 
-## License
+```bash
+docker-compose up -d
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Para parar:
+
+```bash
+docker-compose down
+```
+
+## Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+## Autor
+
+Helder Saraiva de Oliveira

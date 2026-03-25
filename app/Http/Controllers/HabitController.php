@@ -2,64 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\habit;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
-class habitController extends Controller
+class HabitController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $habit = auth()->user()
+            ->habit()
+            ->latest()
+            ->get();
+
+        return view('habit.index', compact('habit'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function destroy(\App\Models\Habit $habit)
     {
-        //
+        if ($habit->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $habit->delete();
+
+        return back();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(habit $habit)
-    {
-        //
-    }
+        try {
+        auth()->user()->habit()->create([
+            'name' => $request->name
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(habit $habit)
-    {
-        //
-    }
+        } catch (\Exception $e) {
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, habit $habit)
-    {
-        //
-    }
+            auth()->user()->habit()->create([
+                'habit' => $request->habit
+            ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(habit $habit)
-    {
-        //
+        }
+
+        return redirect()->route('habit.index');
     }
 }

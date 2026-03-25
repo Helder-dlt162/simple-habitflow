@@ -4,7 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class habit extends Model
+class Habit extends Model
 {
-    //
+
+    protected $table = 'habit';
+    
+    protected $fillable = [
+        'user_id',
+        'name',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

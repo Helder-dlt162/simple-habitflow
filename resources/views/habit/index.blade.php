@@ -22,9 +22,8 @@
                         <tbody>
                             @foreach($habit as $habit)
                                 <tr class="border-b">
-                                    <td>{{ $habit->name}}</td>
-                                    <td>
-
+                                    <td class="mt-4">{{ $habit->name}}</td>
+                                    <td class="mt-4">
                                         <form method="POST" action="{{ route('habit.destroy', $habit) }}"
                                         onsubmit="return confirm('Delete this expense?')">
                                         @csrf
